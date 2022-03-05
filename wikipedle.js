@@ -1,14 +1,20 @@
 var guesses = 0;
 var ready = 0;
 var secret = {};
-secret.title = "Lilith";
+var win = false;
+var givenUp = false;
+secret.title = getArticleOfTheDay();
 secret.linksInArticle = new Array();
 secret.linksToArticle = new Array();
+
+preventReloadOnForm();
 
 httpGetAsync('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=links&titles=' + secret.title + '&pllimit=500', SetLinksInArticle);
 httpGetAsync('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=linkshere&titles=' + secret.title + '&lhlimit=500', SetLinksToArticle);
 
 loadCookieDataIfAvailable();
+
+console.log(document.cookie);
 
 function httpGetAsync(url, callback){
     var xmlHttp = new XMLHttpRequest();
@@ -42,7 +48,7 @@ function httpGetAsyncAndTrackGuesses(url, callback, linksInCommon, linksTotal, s
 
 function apiCallError(){
     updateStatusText('Error','Looks like something went wrong while trying to reach the Wikipedia API.');
-    if(ready == 2){
+    if(ready == 3){
         //Refund one guess
         guesses--;
         setInputDisabled(false);
@@ -95,14 +101,13 @@ function SetLinksToArticle(responseText){
 }
 
 function guess(){
-    setInputDisabled(true);
-    var guessedArticle = document.getElementById('inputTextBox').value;
-    guesses++;
+    var guessedArticle = document.getElementById('inputTextBox').value;  
     if(guessedArticle != ''){
+        setInputDisabled(true);
+        guesses++;
         if(guessedArticle.toUpperCase() == secret.title.toUpperCase()){
             displayWin();
-            //TODO
-            //Insert win into cookie
+            insertWinToCookie();
         } else {
             httpGetAsync('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=info&titles=' + guessedArticle, validateGuessCallback);
         }
@@ -156,9 +161,9 @@ function guessCallBack(responseText, linksInCommon, linksTotal, secretLinksToGue
     if (responseObject.hasOwnProperty('continue')){
         httpGetAsyncAndTrackGuesses('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=links&titles=' + guessedArticle + '&pllimit=500&plcontinue=' + responseObject.continue.plcontinue, guessCallBack, linksInCommon, linksTotal, secretLinksToGuess, guessLinksToSecret);
     } else {
-        if(linksTotal < 30){
+        if(linksTotal < 50){
             guesses--;
-            updateStatusText('Not enough links','Your guess has less than 30 links on the page which means that it is either just an article that redirects to other articles or the article is insignificant.');
+            updateStatusText('Not enough links','Your guess has less than 50 links on the page which means that it is either just an article that redirects to other articles or the article is insignificant.');
             setInputDisabled(false);
         } else {
             completeGuess(linksInCommon, linksTotal, secretLinksToGuess, guessLinksToSecret);
@@ -184,10 +189,12 @@ function completeGuess(linksInCommon, linksTotal, secretLinksToGuess, guessLinks
     if(linksTotal != 0)
         percent = Math.round(linksInCommon / linksTotal * 100);
 
-    updateStatusText('Last Guess: ' + document.getElementById('inputTextBox').value, 'You guess has ' + percent + '% (' + linksInCommon + '/' + linksTotal + ') of links on the article in common with the secret article.<br>'+guessLinksToSecretText+'<br>'+secretLinksToGuessText);
+    updateStatusText('Last Guess: ' + document.getElementById('inputTextBox').value, 'Your guess has ' + percent + '% (' + linksInCommon + '/' + linksTotal + ') of links on the article in common with the secret article.<br>'+guessLinksToSecretText+'<br>'+secretLinksToGuessText);
 
-    //TODO: Put new table row into table of previous guesses
-    insertNewTableRow(percent, linksInCommon, linksTotal, secretLinksToGuess, guessLinksToSecret);
+    //Put new table row into table of previous guesses
+    insertNewTableRow(guesses, percent, linksInCommon, linksTotal, document.getElementById('inputTextBox').value, secretLinksToGuess, guessLinksToSecret);
+    //Insert the guessed row into the cookie
+    insertRowToCookie(guesses, percent, linksInCommon, linksTotal, document.getElementById('inputTextBox').value, secretLinksToGuess, guessLinksToSecret);
 
     setInputDisabled(false);
 }
@@ -198,7 +205,8 @@ function updateStatusText(header, text){
 }
 
 function updateSecretText(){
-    document.getElementById('secretInfoText').innerHTML = 'The secret article has ' + secret.linksInArticle.length + ' links on the article.<br>There are ' + secret.linksToArticle.length + ' articles that point to the secret article.';
+    document.getElementById('secretInfoText1').innerHTML = 'The secret article has ' + secret.linksInArticle.length + ' links on the article.';
+    document.getElementById('secretInfoText2').innerHTML = '<br>There are ' + secret.linksToArticle.length + ' articles that point to the secret article.';
 }
 
 function displayWin(){
@@ -214,37 +222,32 @@ function setInputDisabled(value){
         document.getElementById('inputTextBox').value = '';
 }
 
-function insertNewTableRow(percent, linksInCommon, linksTotal, secretLinksToGuess, guessLinksToSecret){
+function insertNewTableRow(number, percent, linksInCommon, linksTotal, articleTitle, secretLinksToGuess, guessLinksToSecret){
     var index = 0;
     var tableBody = document.getElementById('tableBody');
     var currentRows = tableBody.children;
     var newRow;
 
     if(currentRows.length >= 1){
-        console.log(index);
-        while (index < currentRows.length && currentRows[index].children[0].innerHTML.substring(0, currentRows[index].children[0].innerHTML.indexOf('%')) > percent){
+        while (index < currentRows.length && currentRows[index].children[1].innerHTML.substring(0, currentRows[index].children[1].innerHTML.indexOf('%')) > percent){
             index++;  
         }
         newRow = tableBody.insertRow(index);
     } else {
-        console.log('Length is 0');
         newRow = tableBody.insertRow(-1);
     }
-    
+
+    var tdNumber = document.createElement('td');
+    tdNumber.innerHTML = number;
+    newRow.appendChild(tdNumber);
+
     var tdPercent = document.createElement('td');
     tdPercent.innerHTML = percent + '% (' + linksInCommon + '/' + linksTotal + ')';
     newRow.appendChild(tdPercent);
 
     var tdGuess = document.createElement('td');
-    tdGuess.innerHTML = document.getElementById('inputTextBox').value;
+    tdGuess.innerHTML = articleTitle;
     newRow.appendChild(tdGuess);
-
-    var tdSecretLinksToGuess = document.createElement('td');
-    if(secretLinksToGuess)
-        tdSecretLinksToGuess.innerHTML = '&#10004';
-    else
-        tdSecretLinksToGuess.innerHTML = '&#10006'
-    newRow.appendChild(tdSecretLinksToGuess);
 
     var tdGuessLinksToSecret = document.createElement('td');
     if(guessLinksToSecret)
@@ -252,19 +255,34 @@ function insertNewTableRow(percent, linksInCommon, linksTotal, secretLinksToGues
     else
         tdGuessLinksToSecret.innerHTML = '&#10006'
     newRow.appendChild(tdGuessLinksToSecret);
+    
+    var tdSecretLinksToGuess = document.createElement('td');
+    if(secretLinksToGuess)
+        tdSecretLinksToGuess.innerHTML = '&#10004';
+    else
+        tdSecretLinksToGuess.innerHTML = '&#10006'
+    newRow.appendChild(tdSecretLinksToGuess);
 }
+
 function giveUp(){
-    if (confirm('Are you sure that you want to give up?')) {
-        updateStatusText(':(', 'You gave up after ' + guesses + " guesses. The secret word was " + secret.title + '.');
+    if (confirm('Are you sure that you want to give up?')) {    
         setInputDisabled(true);
-      } 
+        givenUp = true;
+        insertGiveUpToCookie();
+    } 
+}
+
+function displayGiveUp(){
+    updateStatusText(':(', 'You gave up after ' + guesses + " guesses. The secret word was " + secret.title + '.');
 }
 
 function increaseReadyCheck(){
     ready++;
     if(ready == 3){
+        if (win == false && givenUp == false){
+            setInputDisabled(false);
+        }
         updateSecretText();
-        setInputDisabled(false);
     }
 }
 
@@ -293,24 +311,108 @@ function loadCookieDataIfAvailable(){
         var guessesArray = wikipedleJsonCookie.guesses;
         guesses = guessesArray.length;
         guessesArray.forEach(function(item){
-            insertNewTableRow(item.percent, item.linksInCommon, item.linksTotal, item.secretLinksToGuess, item.guessLinksToSecret);
+            insertNewTableRow(item.number, item.percent, item.linksInCommon, item.linksTotal, item.articleTitle, item.secretLinksToGuess, item.guessLinksToSecret);
         });
 
         if(wikipedleJsonCookie.win == true){
-            //TODO
-            //Problem: if i disable the input boxes here, after the ready check they will just be activated again
-            //Therefore another variable has to be introduced that tracks whether the game is already won, in the redy check the input boxes are only enabled if win == false
-            //The inputs do not have to be explicitly disabled here because they already are disabled at this point in the code.
+            win = true;
+            //Increase guesses by 1 cause the winning guess is not entered into the table of guesses
+            guesses++;
+            displayWin();
+        }
+
+        if(wikipedleJsonCookie.givenUp == true){
+            givenUp = true;
+            displayGiveUp();
         }
     }
     
     increaseReadyCheck();
 }
 
-function insertRowToCookie(){
+function insertRowToCookie(number, percent, linksInCommon, linksTotal, articleTitle, secretLinksToGuess, guessLinksToSecret){
     var cookieString = getWikipedleJsonObjectFromCookie();
+    var jsonObject = {};
+
+    if(cookieString != ''){
+        jsonObject = JSON.parse(cookieString);
+    } else {
+        jsonObect = {};
+        jsonObject.givenUp = false;
+        jsonObject.win = false;
+        jsonObject.guesses = [];
+    }
+
+    var rowObject = {};
+    rowObject.number = number;
+    rowObject.percent = percent;
+    rowObject.linksInCommon = linksInCommon;
+    rowObject.linksTotal = linksTotal;
+    rowObject.articleTitle = articleTitle;
+    rowObject.secretLinksToGuess = secretLinksToGuess;
+    rowObject.guessLinksToSecret = guessLinksToSecret;
+
+    jsonObject.guesses.push(rowObject);
+
+    document.cookie = 'wikipedleObject=' + JSON.stringify(jsonObject) + ';expires=' + getEndOfDayString() + ';SameSite=Lax';
+
+    console.log(getEndOfDayString());
+
+    console.log(document.cookie);
 }
 
 function insertWinToCookie(){
     var cookieString = getWikipedleJsonObjectFromCookie();
+    var jsonObject;
+
+    if(cookieString != ''){
+        jsonObject = JSON.parse(cookieString);
+    } else {
+        jsonObect = {};
+        jsonObject.givenUp = false;
+        jsonObject.guesses = [];
+    }
+
+    jsonObject.win = true;
+
+    document.cookie = 'wikipedleObject=' + JSON.stringify(jsonObject) + ';expires=' + getEndOfDayString() + ';SameSite=Lax';
+
+    console.log(document.cookie);
+}
+
+function insertGiveUpToCookie(){
+    var cookieString = getWikipedleJsonObjectFromCookie();
+    var jsonObject;
+
+    if(cookieString != ''){
+        jsonObject = JSON.parse(cookieString);
+    } else {
+        jsonObect = {};
+        jsonObject.win = false;
+        jsonObject.guesses = [];
+    }
+
+    jsonObject.givenUp = true;
+
+    document.cookie = 'wikipedleObject=' + JSON.stringify(jsonObject) + ';expires=' + getEndOfDayString() + ';SameSite=Lax';
+
+    console.log(document.cookie);
+}
+
+function getEndOfDayString(){
+    var date = new Date(); 
+    var now_utc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59);
+
+    return new Date(now_utc).toUTCString();
+}
+
+function getArticleOfTheDay(){
+    return 'Bronze';
+}
+
+function preventReloadOnForm(){
+    var form = document.getElementById("inputForm");
+    form.addEventListener('submit', function(event){
+        event.preventDefault();
+    });
 }

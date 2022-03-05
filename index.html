@@ -7,27 +7,48 @@
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         <!-- Wikipedle JS-->
-        <script src="wikipedle.js"></script>
+        <script src="wikipedle.js" defer></script>
     </head>
     <body>
-        <h1>Wikipedle</h1>
-        <p id="secretInfoText">Loading...</p>
-        <h1 id="statusHeader">Welcome</h1>
-        <p id="statusText">You can start by making a guess!</p>
-        <input id="inputTextBox" disabled="true" autofocus="autofocus">
-        <button id="guessButton" type="button" onclick="guess()" disabled="true">Guess</button>
-        <button id="giveUpButton" type="button" onclick="giveUp()" disabled="true">Give up</button>
-        <table>
-            <thead>
-                <tr>
-                    <th width="300px">Similarity</th>
-                    <th width="300px">Guess</th>
-                    <th width="300px">Guess links to Secret</th>
-                    <th width="300px">Secret links to Guess</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-            </tbody>
-        </table>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="d-flex justify-content-center">Wikipedle</h1>
+                    <p class="d-flex justify-content-center" id="secretInfoText1">Loading...</p>
+                    <p class="d-flex justify-content-center" id="secretInfoText2"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="d-flex justify-content-center" id="statusHeader">Welcome</h1>
+                    <p class="d-flex justify-content-center" id="statusText">You can start by making a guess!</p>
+                    <button type="button" style="visibility:hidden;">Share</button>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <form id="inputForm" class="row col-4">
+                    <input width="600" class="col-6" id="inputTextBox" disabled="true" autofocus="autofocus">
+                    <button width="200" class="col-6" id="guessButton" type="submit" onclick="guess()" disabled="true">Guess</button>
+                </form>
+                <button width="200" class="col-2" id="giveUpButton" type="button" onclick="giveUp()" disabled="true">Give up</button>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <div class="col-8">
+                    <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th width="50px">#</th>
+                                <th width="200px">Similarity</th>
+                                <th width="250px">Guess</th>
+                                <th width="180px">Guess links to Secret</th>
+                                <th width="180px">Secret links to Guess</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
