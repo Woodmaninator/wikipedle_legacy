@@ -211,8 +211,10 @@ function setInputDisabled(value){
     document.getElementById('inputTextBox').disabled = value;
     document.getElementById('giveUpButton').disabled = value;
     //Also clear the input of the textBox if disabled is set to false
-    if(value == false)
+    if(value == false) {
         document.getElementById('inputTextBox').value = '';
+        document.getElementById('inputTextBox').focus();
+    }
 }
 
 function insertPreviousGuessRow(number, percent, linksInCommon, linksTotal, articleTitle, secretLinksToGuess, guessLinksToSecret){
