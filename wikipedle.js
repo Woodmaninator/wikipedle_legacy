@@ -1,9 +1,12 @@
+//If you have to look at this code, I am sorry - Woodmaninator
+
 var guesses = 0;
 var ready = 0;
 var secret = {};
 var win = false;
 var givenUp = false;
-secret.title = getArticleOfTheDay();
+var puzzleNumber = getDayNumber();
+secret.title = getArticleOfTheDay(puzzleNumber);
 secret.linksInArticle = new Array();
 secret.linksToArticle = new Array();
 
@@ -13,8 +16,6 @@ httpGetAsync('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=js
 httpGetAsync('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=linkshere&titles=' + secret.title + '&lhlimit=500', SetLinksToArticle);
 
 loadCookieDataIfAvailable();
-
-console.log(document.cookie);
 
 function httpGetAsync(url, callback){
     var xmlHttp = new XMLHttpRequest();
@@ -106,6 +107,7 @@ function guess(){
         setInputDisabled(true);
         guesses++;
         if(guessedArticle.toUpperCase() == secret.title.toUpperCase()){
+            win = true;
             displayWin();
             insertWinToCookie();
         } else {
@@ -173,24 +175,14 @@ function guessCallBack(responseText, linksInCommon, linksTotal, secretLinksToGue
 
 function completeGuess(linksInCommon, linksTotal, secretLinksToGuess, guessLinksToSecret){
     var percent = 0;
-    var guessLinksToSecretText = '';
-    var secretLinksToGuessText = '';
-
-    if(guessLinksToSecret)
-        guessLinksToSecretText = 'Your guess LINKS to the secret article!';
-    else
-        guessLinksToSecretText = 'Your guess does not link to the secret article.';
-
-    if(secretLinksToGuess)
-        secretLinksToGuessText = 'The secret article LINKS to the guessed article!';
-    else
-        secretLinksToGuessText = 'The secret article does not link to the guessed article';
 
     if(linksTotal != 0)
         percent = Math.round(linksInCommon / linksTotal * 100);
 
-    updateStatusText('Last Guess: ' + document.getElementById('inputTextBox').value, 'Your guess has ' + percent + '% (' + linksInCommon + '/' + linksTotal + ') of links on the article in common with the secret article.<br>'+guessLinksToSecretText+'<br>'+secretLinksToGuessText);
+    updateStatusText('Last Guess: ' + document.getElementById('inputTextBox').value, 'Your guess has ' + percent + '% (' + linksInCommon + '/' + linksTotal + ') of links on the article in common with the secret article.');
 
+    //Put previous guess into previous guess table
+    insertPreviousGuessRow(guesses, percent, linksInCommon, linksTotal, document.getElementById('inputTextBox').value, secretLinksToGuess, guessLinksToSecret);
     //Put new table row into table of previous guesses
     insertNewTableRow(guesses, percent, linksInCommon, linksTotal, document.getElementById('inputTextBox').value, secretLinksToGuess, guessLinksToSecret);
     //Insert the guessed row into the cookie
@@ -211,6 +203,7 @@ function updateSecretText(){
 
 function displayWin(){
     updateStatusText('You win!', 'The secret article was ' + secret.title + '. You guessed it after ' + guesses + ' guesses.');
+    document.getElementById('shareButton').setAttribute('style','visibility:visible;');
 }
 
 function setInputDisabled(value){
@@ -220,6 +213,21 @@ function setInputDisabled(value){
     //Also clear the input of the textBox if disabled is set to false
     if(value == false)
         document.getElementById('inputTextBox').value = '';
+}
+
+function insertPreviousGuessRow(number, percent, linksInCommon, linksTotal, articleTitle, secretLinksToGuess, guessLinksToSecret){
+    var row = document.getElementById('previousGuessRow');
+    row.children[0].innerHTML = number;
+    row.children[1].innerHTML = percent + '% (' + linksInCommon + '/' + linksTotal + ')';
+    row.children[2].innerHTML = articleTitle;
+    if(guessLinksToSecret)
+        row.children[3].innerHTML = '&#10004';
+    else
+        row.children[3].innerHTML = '&#10006'
+    if(secretLinksToGuess)
+        row.children[4].innerHTML = '&#10004';
+    else
+        row.children[4].innerHTML = '&#10006';
 }
 
 function insertNewTableRow(number, percent, linksInCommon, linksTotal, articleTitle, secretLinksToGuess, guessLinksToSecret){
@@ -268,12 +276,14 @@ function giveUp(){
     if (confirm('Are you sure that you want to give up?')) {    
         setInputDisabled(true);
         givenUp = true;
+        displayGiveUp();
         insertGiveUpToCookie();
     } 
 }
 
 function displayGiveUp(){
     updateStatusText(':(', 'You gave up after ' + guesses + " guesses. The secret word was " + secret.title + '.');
+    document.getElementById('shareButton').setAttribute('style','visibility:visible;');
 }
 
 function increaseReadyCheck(){
@@ -355,10 +365,6 @@ function insertRowToCookie(number, percent, linksInCommon, linksTotal, articleTi
     jsonObject.guesses.push(rowObject);
 
     document.cookie = 'wikipedleObject=' + JSON.stringify(jsonObject) + ';expires=' + getEndOfDayString() + ';SameSite=Lax';
-
-    console.log(getEndOfDayString());
-
-    console.log(document.cookie);
 }
 
 function insertWinToCookie(){
@@ -376,8 +382,6 @@ function insertWinToCookie(){
     jsonObject.win = true;
 
     document.cookie = 'wikipedleObject=' + JSON.stringify(jsonObject) + ';expires=' + getEndOfDayString() + ';SameSite=Lax';
-
-    console.log(document.cookie);
 }
 
 function insertGiveUpToCookie(){
@@ -395,24 +399,53 @@ function insertGiveUpToCookie(){
     jsonObject.givenUp = true;
 
     document.cookie = 'wikipedleObject=' + JSON.stringify(jsonObject) + ';expires=' + getEndOfDayString() + ';SameSite=Lax';
-
-    console.log(document.cookie);
 }
 
 function getEndOfDayString(){
     var date = new Date(); 
-    var now_utc =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59);
+    var utcEndOfDay =  Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59);
 
-    return new Date(now_utc).toUTCString();
+    return new Date(utcEndOfDay).toUTCString();
 }
 
-function getArticleOfTheDay(){
-    return 'Bronze';
+function getDayNumber(){
+    var date = new Date();
+    var utcNow = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+    var startOfYear = Date.UTC(date.getUTCFullYear(), 0, 0, 0, 0, 1);
+    var diff = utcNow - startOfYear;
+    var oneDay = 1000 * 60 * 60 * 24;
+    var day = Math.floor(diff / oneDay);
+    console.log(day);
+    return day - 63; //I start on the 64th day
+}
+
+function getArticleOfTheDay(puzzleNumber){
+    var wordArray = ['Bacteria', 'Gravity', 'Bone', 'Lute', 'Prison', 'Sheep', 'Antarctica', 'Capacitor', 'Planetarium', 'Nile', 'Triceratops', 'Earthquake', 'Nitrogen', 'Cheese', 'Neutron', 'Greenland', 'Shark', 'Volcano'];
+    return wordArray[puzzleNumber - 1]; //-1 cause array start at 0
 }
 
 function preventReloadOnForm(){
-    var form = document.getElementById("inputForm");
-    form.addEventListener('submit', function(event){
+    var form1 = document.getElementById('inputForm');
+    form1.addEventListener('submit', function(event){
         event.preventDefault();
     });
+
+    var form2 = document.getElementById('shareForm');
+    form2.addEventListener('submit', function(event){
+        event.preventDefault();
+    });
+}
+
+function copyTextToClipboard(){
+    var text = '';
+    if(win || givenUp){
+        if(win){
+            text = 'I solved Wikipedle #' + puzzleNumber + ' in ' + guesses + ' guesses. https://woodmaninator.github.io/wikipedle/';
+        }
+        if(givenUp){
+            text = 'I gave up on Wikipedle #' + puzzleNumber + ' after ' + guesses + ' guesses. https://woodmaninator.github.io/wikipedle/';
+        }
+        navigator.clipboard.writeText(text);
+        console.log(text);
+    }
 }
