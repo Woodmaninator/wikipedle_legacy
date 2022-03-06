@@ -349,7 +349,7 @@ function insertRowToCookie(number, percent, linksInCommon, linksTotal, articleTi
     if(cookieString != ''){
         jsonObject = JSON.parse(cookieString);
     } else {
-        jsonObect = {};
+        jsonObject = {};
         jsonObject.givenUp = false;
         jsonObject.win = false;
         jsonObject.guesses = [];
@@ -371,12 +371,12 @@ function insertRowToCookie(number, percent, linksInCommon, linksTotal, articleTi
 
 function insertWinToCookie(){
     var cookieString = getWikipedleJsonObjectFromCookie();
-    var jsonObject;
+    var jsonObject = {};
 
     if(cookieString != ''){
         jsonObject = JSON.parse(cookieString);
     } else {
-        jsonObect = {};
+        jsonObject = {};
         jsonObject.givenUp = false;
         jsonObject.guesses = [];
     }
@@ -388,12 +388,12 @@ function insertWinToCookie(){
 
 function insertGiveUpToCookie(){
     var cookieString = getWikipedleJsonObjectFromCookie();
-    var jsonObject;
+    var jsonObject = {};
 
     if(cookieString != ''){
         jsonObject = JSON.parse(cookieString);
     } else {
-        jsonObect = {};
+        jsonObject = {};
         jsonObject.win = false;
         jsonObject.guesses = [];
     }
@@ -417,7 +417,6 @@ function getDayNumber(){
     var diff = utcNow - startOfYear;
     var oneDay = 1000 * 60 * 60 * 24;
     var day = Math.floor(diff / oneDay);
-    console.log(day);
     return day - 63; //I start on the 64th day
 }
 
