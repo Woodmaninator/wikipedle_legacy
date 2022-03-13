@@ -69,7 +69,7 @@ function SetLinksInArticle(responseText){
 
     linkArray.forEach(function(item){
         if(item.ns == '0'){
-            secret.linksInArticle.push(item.title);
+            secret.linksInArticle.push(item.title.toUpperCase());
         }
     });
 
@@ -142,12 +142,12 @@ function guessCallBack(responseText, linksInCommon, linksTotal, secretLinksToGue
 
     linkArray.forEach(function(item){
         if(item.ns == '0'){
-            if(secret.linksInArticle.includes(item.title)){
+            if(secret.linksInArticle.includes(item.title.toUpperCase())){
                 linksInCommon++;
             }
             linksTotal++;
             if(!guessLinksToSecret){
-                if (item.title == secret.title){
+                if (item.title.toUpperCase() == secret.title.toUpperCase()){
                     guessLinksToSecret = true;
                 }
             }
@@ -155,7 +155,7 @@ function guessCallBack(responseText, linksInCommon, linksTotal, secretLinksToGue
     });
 
     if(!secretLinksToGuess){
-        if(secret.linksInArticle.includes(guessedArticle)){
+        if(secret.linksInArticle.includes(guessedArticle.toUpperCase())){
             secretLinksToGuess = true;
         }
     }
