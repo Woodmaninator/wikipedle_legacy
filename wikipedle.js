@@ -421,7 +421,7 @@ function getDayNumber(){
 }
 
 function getArticleOfTheDay(puzzleNumber){
-    var wordArray = ['Bacteria', 'Gravity', 'Bone', 'Lute', 'Prison', 'Sheep', 'Antarctica', 'Capacitor', 'Planetarium', 'Nile', 'Triceratops', 'Earthquake', 'Nitrogen', 'Cheese', 'Neutron', 'Greenland', 'Shark', 'Volcano'];
+    var wordArray = ['Bacteria', 'Gravity', 'Bone', 'Lute', 'Prison', 'Sheep', 'Antarctica', 'Capacitor', 'Planetarium', 'Nile', 'Triceratops', 'Earthquake', 'Nitrogen', 'Cheese', 'Neutron', 'Greenland', 'Shark', 'Volcano', 'Graphite', 'Thor', 'Scotland', 'Strawberry', 'Neuron'];
     return wordArray[puzzleNumber - 1]; //-1 cause array start at 0
 }
 
