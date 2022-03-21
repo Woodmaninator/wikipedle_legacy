@@ -155,7 +155,7 @@ function guessCallBack(responseText, linksInCommon, linksTotal, secretLinksToGue
     });
 
     if(!secretLinksToGuess){
-        if(secret.linksInArticle.includes(guessedArticle.toUpperCase())){
+        if(secret.linksInArticle.includes(guessedArticle.toUpperCase().replace(/_/g,' '))){
             secretLinksToGuess = true;
         }
     }
