@@ -260,6 +260,7 @@ function insertNewTableRow(number, percent, linksInCommon, linksTotal, articleTi
     newRow.appendChild(tdGuess);
 
     var tdGuessLinksToSecret = document.createElement('td');
+    tdGuessLinksToSecret.setAttribute('class','text-center');
     if(guessLinksToSecret)
         tdGuessLinksToSecret.innerHTML = '&#10004';
     else
@@ -267,6 +268,7 @@ function insertNewTableRow(number, percent, linksInCommon, linksTotal, articleTi
     newRow.appendChild(tdGuessLinksToSecret);
     
     var tdSecretLinksToGuess = document.createElement('td');
+    tdSecretLinksToGuess.setAttribute('class','text-center');
     if(secretLinksToGuess)
         tdSecretLinksToGuess.innerHTML = '&#10004';
     else

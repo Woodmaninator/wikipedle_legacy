@@ -21,9 +21,9 @@
     <body>
         <div class="container">
             <div class="row">
-                <div class="col-2"></div>
-                <div class="col-8">
-                    <h1 class="d-flex justify-content-center">Wikipedle - Guess the secret article</h1>
+                <div class="col-md-2 col-sm-12"></div>
+                <div class="col-md-8 col-sm-12">
+                    <h1 class="d-flex justify-content-center text-center">Wikipedle - Guess the secret article</h1>
                     <p class="d-flex justify-content-center">Try to guess the secret Wikipedia article by using other Wikipedia article titles. You can narrow the secret article down based on the similarity of
                         the links on the secret article and the links on the guessed article. Another useful piece of information is whether the secret article directly links to the guessed article or the other
                         way around. The secret article will always have a single-word title, however, you can guess articles with multi-word titles. Only articles on the English Wikipedia will work.
@@ -33,13 +33,13 @@
                         The new Wikipedle will be available at 12:00 AM UTC.
                     </p>
                 </div>
-                <div class="col-2"></div>
+                <div class="col-md-2 col-sm-12"></div>
             </div>
 
             <div class="row mt-4"></div>
 
             <div class="row">
-                <div class="col-12">
+                <div class="col-md-12 col-sm-12">
                     <h2 class="d-flex justify-content-center">Secret article</h2>
                     <p class="d-flex justify-content-center" id="secretInfoText1">Loading...</p>
                     <p class="d-flex justify-content-center" id="secretInfoText2"></p>
@@ -49,22 +49,24 @@
             <div class="row mt-4"></div>
 
             <div class="row d-flex justify-content-center">
-                <div class="col-12">
+                <div class="col-md-12 col-sm-12">
                     <h2 class="d-flex justify-content-center" id="statusHeader">Welcome</h2>
                     <p class="d-flex justify-content-center" id="statusText">You can start by making a guess!</p>
-                    <form id="shareForm" class="row d-flex justify-content-center">
-                        <button type="button" class="col-1" id="shareButton" onclick="copyTextToClipboard()" style="visibility:hidden;">Share</button>
-                    </form>
+                    <div class="row d-flex justify-content-center">
+                        <form id="shareForm" class="col-md-1 col-sm-8 d-flex justify-content-center">
+                            <button type="button" id="shareButton" onclick="copyTextToClipboard()" style="visibility:hidden;">Share</button>
+                        </form>
+                    </div>                
                 </div>
             </div>
 
             <div class="row mt-5"></div>
 
             <div class="row d-flex justify-content-center">
-                <form id="inputForm" class="row col-4">
-                    <input class="col-6" id="inputTextBox" disabled="true" autofocus="autofocus">
-                    <button class="col-3" id="guessButton" type="submit" onclick="guess()" disabled="true">Guess</button>
-                    <button class="col-3" id="giveUpButton" type="button" onclick="giveUp()" disabled="true">Give up</button>
+                <form id="inputForm" class="row col-md-4 col-sm-8">
+                    <input class="col-md-6 col-sm-12" id="inputTextBox" disabled="true" autofocus="autofocus">
+                    <button class="col-md-3 col-sm-6" id="guessButton" type="submit" onclick="guess()" disabled="true">Guess</button>
+                    <button class="col-md-3 col-sm-6" id="giveUpButton" type="button" onclick="giveUp()" disabled="true">Give up</button>
                 </form>
             </div>
 
@@ -72,15 +74,15 @@
 
             <div class="row d-flex justify-content-center">
                 <h2 class="d-flex justify-content-center">Previous Guess</h2>
-                <div class="col-8">
+                <div class="col-md-8 col-sm-12">
                     <table class="table">
                         <thead class="thead-light">
                             <tr>
-                                <th width="50px">#</th>
-                                <th width="180px">Similarity</th>
-                                <th width="240px">Guess</th>
-                                <th width="200px">Guess links to Secret</th>
-                                <th width="200px">Secret links to Guess</th>
+                                <th class="col-md-1 col-sm-1">#</th>
+                                <th class="col-md-3 col-sm-5">Similarity</th>
+                                <th class="col-md-4 col-sm-6">Guess</th>
+                                <th class="col-md-2 col-sm-6 text-center">Guess links to Secret</th>
+                                <th class="col-md-2 col-sm-6 text-center">Secret links to Guess</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -88,8 +90,8 @@
                                 <td>0</td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -100,15 +102,15 @@
 
             <div class="row d-flex justify-content-center">
                 <h2 class="d-flex justify-content-center">List of previous guesses</h2>
-                <div class="col-8">
+                <div class="col-md-8 col-sm-12">
                     <table class="table">
                         <thead class="thead-light">
                             <tr>
-                                <th width="50px">#</th>
-                                <th width="180px">Similarity</th>
-                                <th width="240px">Guess</th>
-                                <th width="200px">Guess links to Secret</th>
-                                <th width="200px">Secret links to Guess</th>
+                                <th class="col-md-1 col-sm-1">#</th>
+                                <th class="col-md-3 col-sm-5">Similarity</th>
+                                <th class="col-md-4 col-sm-6">Guess</th>
+                                <th class="col-md-2 col-sm-6 text-center">Guess links to Secret</th>
+                                <th class="col-md-2 col-sm-6 text-center">Secret links to Guess</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -120,7 +122,7 @@
             <div class="row mt-5"></div>
 
             <div class="row">
-                <div class="col-12">
+                <div class="col-md-12 col-sm-12">
                     <h2 class="d-flex justify-content-center">About</h2>
                     <p class="d-flex justify-content-center">Wikipedle is a Woodlabs&#8482; product made by Woodmaninator</p>
                     <p class="d-flex justify-content-center">We at Woodlabs&#8482; care about furthering research of artificial intelligence, block chain, big data, machine learning, augmented reality, quantum computing, and advanced woodworking.</p>
