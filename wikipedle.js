@@ -449,6 +449,7 @@ function copyTextToClipboard(){
             text = 'I gave up on Wikipedle #' + puzzleNumber + ' after ' + guesses + ' guesses. https://woodmaninator.github.io/wikipedle/';
         }
         navigator.clipboard.writeText(text);
+        alert('Share message copied to clipboard.');
         console.log(text);
     }
 }
