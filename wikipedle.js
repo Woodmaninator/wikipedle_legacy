@@ -423,7 +423,7 @@ function getDayNumber(){
 }
 
 function getArticleOfTheDay(puzzleNumber){
-    var wordArray = ['Bacteria', 'Gravity', 'Bone', 'Lute', 'Prison', 'Sheep', 'Antarctica', 'Capacitor', 'Planetarium', 'Nile', 'Triceratops', 'Earthquake', 'Nitrogen', 'Cheese', 'Neutron', 'Greenland', 'Shark', 'Volcano', 'Graphite', 'Thor', 'Strawberry', 'Neuron', 'Sphinx', 'Testosterone', 'Laser', 'Glucose', 'Andes', 'Diabetes', 'Wasp', 'Engine', 'Library', 'Momentum', 'Wheel', 'DVD', 'Pendulum', 'Lynx', 'Mosque' , 'Friction', 'Pythagoras', 'Mosquito', 'Fossil', 'Outback', 'Green', 'Salamander', 'Bassoon', 'Glass'];
+    var wordArray = ['Bacteria', 'Gravity', 'Bone', 'Lute', 'Prison', 'Sheep', 'Antarctica', 'Capacitor', 'Planetarium', 'Nile', 'Triceratops', 'Earthquake', 'Nitrogen', 'Cheese', 'Neutron', 'Greenland', 'Shark', 'Volcano', 'Graphite', 'Thor', 'Strawberry', 'Neuron', 'Sphinx', 'Testosterone', 'Laser', 'Glucose', 'Andes', 'Diabetes', 'Wasp', 'Engine', 'Library', 'Momentum', 'Wheel', 'DVD', 'Pendulum', 'Lynx', 'Mosque' , 'Friction', 'Pythagoras', 'Mosquito', 'Fossil', 'Outback', 'Green', 'Salamander', 'Bassoon', 'Glass', 'Democracy', 'Mining', 'Plato', 'Molecule', 'Red', 'Geometry', 'Scorpion'];
     return wordArray[puzzleNumber - 1]; //-1 cause array start at 0
 }
 
