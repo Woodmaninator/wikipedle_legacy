@@ -419,11 +419,11 @@ function getDayNumber(){
     var diff = utcNow - startOfYear;
     var oneDay = 1000 * 60 * 60 * 24;
     var day = Math.floor(diff / oneDay);
-    return day - 63; //I start on the 64th day
+    return day - 90; //I start on the 64th day
 }
 
 function getArticleOfTheDay(puzzleNumber){
-    var wordArray = ['Bacteria', 'Gravity', 'Bone', 'Lute', 'Prison', 'Sheep', 'Antarctica', 'Capacitor', 'Planetarium', 'Nile', 'Triceratops', 'Earthquake', 'Nitrogen', 'Cheese', 'Neutron', 'Greenland', 'Shark', 'Volcano', 'Graphite', 'Thor', 'Strawberry', 'Neuron', 'Sphinx', 'Testosterone', 'Laser', 'Glucose', 'Andes', 'Diabetes', 'Wasp', 'Engine', 'Library', 'Momentum', 'Wheel', 'DVD', 'Pendulum', 'Lynx', 'Mosque' , 'Friction', 'Pythagoras', 'Mosquito', 'Fossil', 'Outback', 'Green', 'Salamander', 'Bassoon', 'Glass'];
+    var wordArray = ['Dragon', 'Democracy', 'Geometry', 'Whale', 'Pythagoras', 'Ultraviolet','Carbohydrate'];
     return wordArray[puzzleNumber - 1]; //-1 cause array start at 0
 }
 
