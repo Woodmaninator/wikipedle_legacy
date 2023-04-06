@@ -423,7 +423,7 @@ function getDayNumber(){
 }
 
 function getArticleOfTheDay(puzzleNumber){
-    var wordArray = ['Dragon', 'Democracy', 'Geometry', 'Whale', 'Pythagoras', 'Ultraviolet','Carbohydrate'];
+    var wordArray = ['Dragon', 'Democracy', 'Geometry', 'Spain' ,'Hacker', 'Whale', 'Pythagoras', 'Ultraviolet','Carbohydrate', 'Surveillance', 'Phishing', 'Terrorism',  'Pine'];
     return wordArray[puzzleNumber - 1]; //-1 cause array start at 0
 }
 
