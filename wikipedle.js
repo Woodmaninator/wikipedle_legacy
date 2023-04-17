@@ -423,7 +423,7 @@ function getDayNumber(){
 }
 
 function getArticleOfTheDay(puzzleNumber){
-    var wordArray = ['Dragon', 'Democracy', 'Geometry', 'Spain' ,'Hacker', 'Whale', 'Pythagoras', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet' ,'Ultraviolet', 'Ultraviolet','Carbohydrate', 'Surveillance', 'Phishing', 'Terrorism',  'Pine'];
+    var wordArray = ['Dragon', 'Democracy', 'Geometry', 'Spain' ,'Hacker', 'Whale', 'Pythagoras', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet', 'Ultraviolet' ,'Ultraviolet', 'Ultraviolet','Carbohydrate', 'Surveillance', 'Phishing', 'Terrorism',  'Pine'];
     return wordArray[puzzleNumber - 1]; //-1 cause array start at 0
 }
 
